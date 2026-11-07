@@ -15,9 +15,10 @@ namespace Domain.Entities
             Id = Guid.NewGuid();
             Title = title ?? throw new ArgumentNullException(nameof(title));
             Author = author ?? throw new ArgumentNullException(nameof(author));
-            CreatedAt = DateTime.Now;
-            LastUpdate = DateTime.Now;
             Price = price;
+            CreatedAt = DateTime.UtcNow;
+            LastUpdate = CreatedAt;
+
         }
 
         public Guid Id { get; private set; }
@@ -27,5 +28,23 @@ namespace Domain.Entities
         public DateTime LastUpdate { get; private set; }
         public Decimal Price { get ; private set; }
 
+
+        public void ChangeTitle(string title)
+        {
+            Title = !string.IsNullOrWhiteSpace(title) ? title : throw new InvalidDataException("Title");
+            LastUpdate = DateTime.UtcNow;
+
+        }
+        public void ChangeAuthor(string author)
+        {
+            Author = !string.IsNullOrWhiteSpace(author)? author :  throw new InvalidDataException("Author");
+            LastUpdate = DateTime.UtcNow;
+
+        }
+        public void ChangePrice(Decimal price)
+        {
+            Price = price >= 0 ? price : throw new ArgumentOutOfRangeException("Price");
+            LastUpdate = DateTime.UtcNow;
+        }
     }
 }

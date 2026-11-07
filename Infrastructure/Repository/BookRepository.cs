@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persintense;
@@ -20,41 +16,37 @@ namespace Infrastructure.Repository
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task Create(Book book)
+        public void Create(Book book)
         {
-            context.Add(book);
-            await context.SaveChangesAsync();
-           
+              context.Add(book);
         }
 
-        public async Task<Book>? Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            var book =  context.Find<Book>(id);
-             if(book == null)
-                return book;
+            var book =  await context.FindAsync<Book>(id);
+            
+            if(book == null)
+                return false;
 
-             context.Remove(book);
+            context.Remove(book);
 
-            await context.SaveChangesAsync();
-            return book;
+           return  true;
         }
 
-        public async Task<IEnumerable<Book>> GetAll()
-        {
-            return await context.Books.ToListAsync();
-        }
+        
 
-        public async Task<Book>? GetById(Guid id)
+        public async Task<Book?> GetById(Guid id)
         {
             return await context.Books.FindAsync(id);
         }
 
-        public async Task<int> Update(Book book)
+        public async Task<IEnumerable<Book>> GetAll( int page,int pageSize)
         {
-            context.Update(book);
-            var affected = await context.SaveChangesAsync();
-
-            return affected;
+            return await context.Books
+                .OrderBy(b => b.Title)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking().ToListAsync();
         }
     }
 }

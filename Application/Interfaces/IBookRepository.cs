@@ -8,11 +8,10 @@ using System.Collections.Generic;
         public interface IBookRepository
         {
 
-            Task Create(Book book);
-            Task<int> Update(Book book);
-            Task<Book> Delete(Guid id);
-            Task<IEnumerable<Book>> GetAll();
-            Task<Book> GetById(Guid id);
+            void Create(Book book);
+            Task<bool> Delete(Guid id);
+            Task<IEnumerable<Book>> GetAll(int page, int PageSize);
+            Task<Book?> GetById(Guid id);
 
         }
     }
